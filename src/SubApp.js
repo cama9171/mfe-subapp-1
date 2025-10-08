@@ -1,21 +1,35 @@
 import React, { useContext, lazy } from "react";
 
-import { AuthProvider, AuthContext } from "MainApp/MainAppContext";
+import { useStore } from "MainApp/MainAppStore";
 
-const SubApp = ({ message, functionMainCounter, subCounter }) => {
-  const { loggedUser, setLoggedUser } = useContext(AuthContext);
+const SubApp = ({ functionMainCounter, subCounter, detailItems, callbackAddToMain }) => {
+  const { loggedUser, setCart } = useStore();
+
+  const handleClick = (item) => {
+    setCart(item);
+  }
 
   return (
     <>
-        <div>SubApp1 Loaded!</div>
-        <div>Logged in user: {loggedUser}</div>
-        <div>{message}</div>
+      <div><strong>SubApp1 Loaded! with User: {loggedUser}</strong></div>
 
-        <div>Sub Counter: {subCounter}</div>
+      <div>Sub Counter: {subCounter}</div>
 
-        <button onClick={() => functionMainCounter()}>
-          Increase Main Counter
-        </button>
+      <button onClick={() => functionMainCounter()}>
+        Increase Main Counter
+      </button>
+      <div>---------------------------------</div>
+
+      {detailItems.map((item) => {
+        return (
+          <div key={item.id}>
+            <div>Name: {item.name}</div>
+            <div>Cuisine: {item.cuisine}</div>
+            <div>Rating: {item.rating}</div>
+            <button onClick={() => handleClick(item)}>Add to main list</button>
+          </div>
+        );
+      })}
     </>
   );
 };
