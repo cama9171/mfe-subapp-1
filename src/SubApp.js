@@ -2,25 +2,29 @@ import React, { useContext, lazy } from "react";
 
 import { useStore } from "MainApp/MainAppStore";
 
-const SubApp = ({ functionMainCounter, subCounter, detailItems, callbackAddToMain }) => {
-  const { loggedUser, setCart } = useStore();
+const SubApp = ({ allowedActions }) => {
+  const { loggedUser, setCart, productList } = useStore();
+
+  console.log(productList);
 
   const handleClick = (item) => {
     setCart(item);
-  }
+  };
+
+  const isActionEnabled = (action) => {
+    if (!allowedActions?.[action]) return false;
+    return allowedActions?.[action] === "ENABLED";
+  };
 
   return (
     <>
-      <div><strong>SubApp1 Loaded! with User: {loggedUser}</strong></div>
+      <div>
+        <strong>SubApp1 Loaded! with User: {loggedUser}</strong>
+      </div>
 
-      <div>Sub Counter: {subCounter}</div>
-
-      <button onClick={() => functionMainCounter()}>
-        Increase Main Counter
-      </button>
       <div>---------------------------------</div>
 
-      {detailItems.map((item) => {
+      {productList.map((item) => {
         return (
           <div key={item.id}>
             <div>Name: {item.name}</div>
@@ -30,6 +34,33 @@ const SubApp = ({ functionMainCounter, subCounter, detailItems, callbackAddToMai
           </div>
         );
       })}
+
+      <button
+        style={{
+          margin: "16px 10px",
+          padding: "8px 16px",
+          cursor: isActionEnabled("Create") ? "pointer" : "not-allowed",
+          borderRadius: 4,
+          width: "50%",
+          opacity: isActionEnabled("Create") ? 1 : 0.5,
+        }}
+        disabled={!isActionEnabled("Create")}
+      >
+        Create
+      </button>
+      <button
+        style={{
+          margin: "16px 10px",
+          padding: "8px 16px",
+          cursor: isActionEnabled("Update") ? "pointer" : "not-allowed",
+          borderRadius: 4,
+          width: "50%",
+          opacity: isActionEnabled("Update") ? 1 : 0.5,
+        }}
+        disabled={!isActionEnabled("Update")}
+      >
+        Update
+      </button>
     </>
   );
 };
